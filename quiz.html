@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python MCQ Quiz</title>
+</head>
+<body>
+    <h1>Python MCQ Quiz</h1>
+
+    <form method="POST">
+        {% for i, mcq in enumerate(mcqs) %}
+            <p><strong>Q{{ i+1 }}: {{ mcq["Question"] }}</strong></p>
+    
+            {% for j in range(4) %}
+                <input type="radio" id="q{{ i }}_{{ j }}" name="q{{ i }}" value="{{ j }}"
+                {% if selected_answers.get("q" ~ i) == j|string %} checked {% endif %}>
+                
+                <label for="q{{ i }}_{{ j }}">{{ mcq["Option " ~ (j+1)] }}</label><br>
+            {% endfor %}
+            
+            <br>
+        {% endfor %}
+    
+        <button type="submit">Submit Quiz</button>
+    </form>
+    
+</body>
+</html>
