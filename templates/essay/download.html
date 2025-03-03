@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Evaluated Responses</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='essay/evaluated_response.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .download-link {
+            color: yellow;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Evaluation Complete</h2>
+        <p>Your responses have been evaluated successfully. Click the link below to download the evaluated file.</p>
+        <a href="{{ url_for('essay.download_file', filename=file_path) }}" class="download-link">
+            Download Evaluated Response
+        </a>
+    </div>
+</body>
+</html>
