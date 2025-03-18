@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url("{{ url_for('static', filename='images/result.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        .result-container {
+            display: inline-block;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: 50%;
+            min-width: 300px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        strong {
+            color: #007bff;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            background: #007bff;
+            border-radius: 8px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz Result</h1>
+    <div class="result-container">
+        <p><strong>Name:</strong> {{ result.Name }}</p>
+        <p><strong>Score:</strong> {{ result.Score }}</p>
+        <p><strong>Badge:</strong> {{ result.Badge }}</p>
+        <p><strong>Feedback:</strong> {{ result.Feedback }}</p>
+        <p><strong>Improvement:</strong> {{ result.Improvement }}</p>
+    </div>
+    <br>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>
