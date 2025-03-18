@@ -1,0 +1,64 @@
+/* Full-page gradient background */
+body {
+    font-family: Arial, sans-serif;
+    background: url("{{ url_for('static', filename='images/background.webp') }}") no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+/* Center the content */
+.container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 350px;
+}
+
+/* Logo styling */
+.logo {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+/* Heading style */
+h2 {
+    color: rgba(27, 26, 26, 0.979);
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+/* Button styling */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: white;
+    color: #242627;
+    font-size: 18px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin: 10px auto;
+    width: 80%;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.btn:hover {
+    background: #f8f9fa;
+    color: #9013fe;
+    transform: scale(1.05);
+}
