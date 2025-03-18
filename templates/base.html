@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Grading System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background">
+        <nav class="navbar">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/mcq" class="nav-link">MCQ Grading</a>
+            <a href="/essay" class="nav-link">Essay Grading</a>
+        </nav>
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
