@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url("{{ url_for('static', filename='images/dashboard.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            margin-top: 50px;
+            font-size: 28px;
+        }
+
+        nav {
+            margin-top: 30px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 15px 0;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        a:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .logout {
+            margin-top: 30px;
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: red;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .logout:hover {
+            background: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h2>Welcome, Teacher</h2>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('teacher.mcq_results') }}">View MCQ Results</a></li>
+            <li><a href="{{ url_for('teacher.essay_results') }}">View Essay Results</a></li>
+            <li><a href="{{ url_for('teacher.coding_results') }}">View Coding Results</a></li>
+        </ul>
+    </nav>
+    <a href="{{ url_for('teacher.logout') }}" class="logout">Logout</a>
+</body>
+</html>
