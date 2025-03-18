@@ -3,87 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Results</title>
+    <title>Quiz Result</title>
     <style>
         body {
-            background-image: url("{{ url_for('static', filename='mcq/result_background.png') }}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             font-family: Arial, sans-serif;
+            background: url("{{ url_for('static', filename='images/result.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
             text-align: center;
-            color: red;
+            margin: 0;
+            padding: 20px;
         }
 
         h1 {
-            margin-top: 50px;
-            color: #FFD700; /* Gold color */
-            font-size: 2.5rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            font-size: 26px;
+            margin-bottom: 20px;
         }
 
         .result-container {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
             display: inline-block;
-            margin-top: 50px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: 50%;
+            min-width: 300px;
         }
 
         p {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
         }
 
-        .score {
-            font-size: 2rem;
-            color:rgb(56, 241, 9);
+        strong {
+            color: #007bff;
         }
 
-        .feedback {
-            font-size: 1.2rem;
-            margin-top: 10px;
-        }
-
-        /* Styled Yellow Buttons */
-        .button {
-            padding: 10px 20px;
-            background-color: #FFD700; /* Yellow color */
-            color: black; /* Black text for contrast */
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            text-decoration: none;
+        a {
             display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
             font-weight: bold;
+            text-decoration: none;
+            color: white;
+            background: #007bff;
+            border-radius: 8px;
+            transition: background 0.3s ease-in-out;
         }
 
-        .button:hover {
-            background-color: #FFC107; /* Slightly darker yellow on hover */
+        a:hover {
+            background: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Quiz Results</h1>
-
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% else %}
-        <p>Congratulations, <strong>{{ name }}</strong>! 🎉</p>
-        <p>Your Score: <strong class="score">{{ score }}</strong> out of <strong>{{ total }}</strong></p>
-
-        <br>
-
-        <!-- ✅ Yellow "Download Results" Button -->
-        <a href="{{ url_for('mcq.download_results') }}" class="button">📥 Download Results</a>
-
-        <br><br>
-
-        <!-- ✅ Yellow "Go Back to Home" Button -->
-        <a href="{{ url_for('home') }}" class="button">🔙 Go Back to Home</a>
-    {% endif %}
+    <h1>Quiz Result</h1>
+    <div class="result-container">
+        <p><strong>Name:</strong> {{ result.Name }}</p>
+        <p><strong>Score:</strong> {{ result.Score }}</p>
+        <p><strong>Badge:</strong> {{ result.Badge }}</p>
+        <p><strong>Feedback:</strong> {{ result.Feedback }}</p>
+        <p><strong>Improvement:</strong> {{ result.Improvement }}</p>
+    </div>
+    <br>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
 </body>
 </html>

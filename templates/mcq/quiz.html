@@ -3,71 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python MCQ Quiz</title>
+    <title>Quiz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            background-image: url('https://source.unsplash.com/1600x900/?technology,coding'); /* Background Image */
-            background-size: cover;
-            background-position: center;
-            color: white;
-        }
-        h1 {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef); /* Light color gradient */
+            color: #333;
             text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 10px;
-            border-radius: 8px;
-        }
-        form {
-            background: rgba(0, 0, 0, 0.7);
+            margin: 0;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
-        fieldset {
-            border: none;
-            margin-bottom: 15px;
+
+        h1 {
+            font-size: 24px;
         }
+
+        p {
+            font-size: 18px;
+        }
+
+        form {
+            display: inline-block;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
         label {
+            font-size: 16px;
             display: block;
             margin: 5px 0;
-        }
-        button {
-            padding: 10px 15px;
-            background: #28a745; /* Green Button */
-            color: white;
-            border: none;
             cursor: pointer;
-            border-radius: 5px;
-            margin-right: 5px;
         }
+
+        input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
         button:hover {
-            background: #218838;
+            background: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Python MCQ Quiz</h1>
-
+    <h1>Question {{ question_number }}</h1>
+    <p>{{ question["Question"] }}</p>
     <form method="POST">
-        {% for i, mcq in enumerate(mcqs) %}
-            <p><strong>Q{{ i+1 }}: {{ mcq["Question"] }}</strong></p>
-    
-            {% for j in range(4) %}
-                <input type="radio" id="q{{ i }}_{{ j }}" name="q{{ i }}" value="{{ j }}"
-                {% if selected_answers.get("q" ~ i) == j|string %} checked {% endif %}>
-                
-                <label for="q{{ i }}_{{ j }}">{{ mcq["Option " ~ (j+1)] }}</label><br>
-            {% endfor %}
-            
-            <br>
+        {% for option in options %}
+            <input type="radio" id="option{{ loop.index }}" name="answer" value="{{ loop.index }}" required>
+            <label for="option{{ loop.index }}">{{ option }}</label><br>
         {% endfor %}
-    
-        <button type="submit">Submit Quiz</button>
-        <button type="reset">Reset</button>
+        <button type="submit">Next</button>
     </form>
 </body>
 </html>

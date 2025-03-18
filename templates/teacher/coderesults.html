@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Results</title>
+    <style>
+        /* Light gradient background */
+        body {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        /* Table styling */
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* First 10 rows excluding the heading row */
+        tr:nth-child(n+2):nth-child(-n+6) {
+            background: rgb(227, 250, 20); /* Bright Yellow-Green */
+        }
+        
+
+/* Next 10 rows - Darker Yellow-Green */
+tr:nth-child(n+7):nth-child(-n+11) {
+    background: rgb(200, 220, 15); /* Slightly Darker Yellow-Green */
+}
+
+/* Repeat pattern */
+tr:nth-child(n+12):nth-child(-n+3116) {
+    background: rgb(227, 250, 20);
+}
+
+tr:nth-child(n+17):nth-child(-n+21) {
+    background: rgb(200, 220, 15);
+}
+
+
+        /* No results message */
+        p {
+            font-size: 18px;
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        /* Button styling */
+        a {
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        a:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Coding Results</h1>
+
+    {% if data %}
+    <table>
+        <tr>
+            {% for col in data[0].keys() %}
+                <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in data %}
+        <tr>
+            {% for value in row.values() %}
+                <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No coding results available.</p>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('teacher.teacher_dashboard') }}">Back to Dashboard</a>
+
+</body>
+</html>

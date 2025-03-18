@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_page.css') }}">
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <!-- Inline CSS for Background Image -->
+    <style>
+        body {
+            background: url("{{ url_for('static', filename='images/background.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to the Automated Grading System</h2>
+
+        <a href="{{ url_for('login') }}" class="btn">
+            <i class="fas fa-user-graduate"></i> Student Login
+        </a>
+        
+        <a href="{{ url_for('teacher.teacher_login') }}" class="btn">
+            <i class="fas fa-chalkboard-teacher"></i> Teacher Login
+        </a>
+    </div>
+</body>
+</html>

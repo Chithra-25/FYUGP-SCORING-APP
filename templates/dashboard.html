@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url("{{ url_for('static', filename='images/dashboard.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            margin-top: 50px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 15px 0;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        a:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .logout {
+            margin-top: 30px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: red;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .logout:hover {
+            background: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h2>Welcome, {{ session['reg_no'] }}</h2>
+    <h3>Select a session:</h3>
+
+    <!-- Navigation Links (For MCQ, Essay, and Code exams) -->
+    <ul>
+        {% if 'reg_no' in session and 'name' in session %}
+            <li><a href="{{ url_for('mcq.home') }}">MCQ Exam</a></li>
+            <li><a href="{{ url_for('essay.index') }}">Essay Exam</a></li>
+            <li><a href="{{ url_for('code.index') }}">Code Exam</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+        {% endif %}
+    </ul>
+
+    <!-- Logout Link -->
+    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+</body>
+</html>

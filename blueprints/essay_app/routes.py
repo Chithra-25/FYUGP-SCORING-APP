@@ -1,115 +1,120 @@
-import os
+<from flask import Flask, render_template, request, send_file, Blueprint, session
 import pandas as pd
-import nltk
-from flask import Blueprint, request, render_template, send_file, redirect, url_for, session
-from nltk.stem import WordNetLemmatizer
+import torch
+from transformers import BertTokenizer, BertModel
+from sklearn.metrics.pairwise import cosine_similarity
+import os
 
 essay_blueprint = Blueprint('essay', __name__, url_prefix='/essay')
 
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Ensure the evaluated_responses folder exists
+evaluated_folder = "essay_results"
+os.makedirs(evaluated_folder, exist_ok=True)
 
-nltk.download("wordnet")
-lemmatizer = WordNetLemmatizer()
+# Load BERT model and tokenizer
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
 
-# Teacher Login Route
-@essay_blueprint.route('/', methods=['GET', 'POST'])
-def login_page():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        # Store credentials in session (no validation)
-        session['teacher_username'] = username
-        session['teacher_password'] = password
+# Function to generate BERT embeddings
+def get_embedding(text):
+    inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=512)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    return outputs.last_hidden_state.mean(dim=1).squeeze()
 
-        # Redirect to upload form
-        return redirect(url_for('essay.upload_form'))
+# Function to evaluate response similarity
+def evaluate_response(question, response):
+    try:
+        # Generate embeddings
+        question_embedding = get_embedding(question)
+        response_embedding = get_embedding(response)
 
-    return render_template('essay/login.html')
+        # Calculate cosine similarity
+        similarity = cosine_similarity(
+            response_embedding.unsqueeze(0), 
+            question_embedding.unsqueeze(0)
+        )[0][0]
 
-# Display Upload Form After Login
-@essay_blueprint.route('/upload-form')
-def upload_form():
-    if 'teacher_username' not in session:
-        return redirect(url_for('essay.login_page'))  # Ensure login first
+        # Convert similarity to a 10-point score
+        score = round(similarity * 10, 2)
 
-    return render_template('essay/upload.html')
+        # Generate feedback
+        if similarity > 0.8:
+            feedback = "Excellent response with strong coverage of key points."
+        elif similarity > 0.5:
+            feedback = "Good response but can improve by adding more key details."
+        else:
+            feedback = "Needs Improvement."
 
-# **Function to Evaluate Responses Based on Keywords**
-def evaluate_response(response, keywords):
-    if pd.isna(response) or not isinstance(response, str) or response.strip() == "":
-        return 0, "No response provided."
-
-    if pd.isna(keywords) or not isinstance(keywords, str) or keywords.strip() == "":
-        return 0, "No keywords provided for evaluation."
-
-    # Process keywords and response words with lemmatization
-    keyword_list = {lemmatizer.lemmatize(kw.strip().lower()) for kw in keywords.split(",")}
-    response_words = {lemmatizer.lemmatize(word) for word in response.lower().split()}
-
-    # Find matched and missing keywords
-    matched_keywords = keyword_list & response_words
-    missing_keywords = keyword_list - response_words
-
-    # Calculate score (out of 10)
-    score = round((len(matched_keywords) / len(keyword_list)) * 10, 2) if keyword_list else 0
-
-    # Generate feedback
-    feedback = f"Strengths: Used keywords - {', '.join(matched_keywords)}. " if matched_keywords else "No relevant keywords found. "
-    if missing_keywords:
-        feedback += f"Areas for improvement: Include - {', '.join(missing_keywords)}."
+    except Exception as e:
+        score = 0
+        feedback = f"Error processing response: {str(e)}"
 
     return score, feedback
 
-# File Upload Route (Processes Uploaded Files)
-@essay_blueprint.route('/upload', methods=['POST'])
-def upload_file():
-    if 'teacher_username' not in session:
-        return redirect(url_for('essay.login_page'))  # Ensure login first
+@essay_blueprint.route('/')
+def index():
+    return render_template('essay/upload.html')
 
-    if 'questions' not in request.files or 'responses' not in request.files:
-        return "Please upload both files"
+@essay_blueprint.route('/evaluate', methods=['POST'])
+def evaluate():
+    if 'response_file' not in request.files:
+        return "No file uploaded", 400
 
-    questions_file = request.files['questions']
-    responses_file = request.files['responses']
-    
-    questions_path = os.path.join(UPLOAD_FOLDER, questions_file.filename)
-    responses_path = os.path.join(UPLOAD_FOLDER, responses_file.filename)
+    response_file = request.files['response_file']
+    if response_file.filename == '':
+        return "No selected file", 400
 
-    questions_file.save(questions_path)
-    responses_file.save(responses_path)
+    # Read uploaded file
+    students_df = pd.read_excel(response_file)
 
-    questions_df = pd.read_excel(questions_path, engine='openpyxl')
-    responses_df = pd.read_excel(responses_path, engine='openpyxl')
+    # Identify question and response columns dynamically
+    question_col = next((col for col in students_df.columns if 'question' in col.lower()), None)
+    response_col = next((col for col in students_df.columns if 'response' in col.lower()), None)
 
-    questions_df.columns = questions_df.columns.str.strip()
-    responses_df.columns = responses_df.columns.str.strip()
+    if not question_col or not response_col:
+        return "Uploaded file must contain 'Question' and 'Response' columns", 400
 
-    merged_df = responses_df.merge(questions_df[['Question', 'Keywords']], on="Question", how="left")
+    # Get logged-in student's registration number
+    name = session.get('name', 'Unknown_Student')
+    register_number = session.get('reg_no', 'Unknown_Student')
 
-    # Identify student response columns (columns containing "Response")
-    student_columns = [col for col in merged_df.columns if "Response" in col]
+    results = []
+    for _, row in students_df.iterrows():
+        question = row[question_col]
+        response = row[response_col]
 
-    # Evaluate responses for each student
-    for student_col in student_columns:
-        score_col = student_col.replace("Response", "Score")
-        feedback_col = student_col.replace("Response", "Feedback")
+        # Skip empty rows
+        if pd.isna(question) or pd.isna(response):
+            continue
 
-        merged_df[score_col], merged_df[feedback_col] = zip(*merged_df.apply(
-            lambda row: evaluate_response(row[student_col], row["Keywords"]), axis=1))
+        # Evaluate using BERT/NLP-based scoring
+        score, feedback = evaluate_response(question, response)
 
-    # Save evaluated responses
-    evaluated_file_path = os.path.join(UPLOAD_FOLDER, "Evaluated_Student_Responses.xlsx")
-    merged_df.to_excel(evaluated_file_path, index=False, engine='openpyxl')
+        # Store results
+        results.append({
+            "Name": name,
+            "Register Number": register_number,
+            "Question": question,
+            "Response": response,
+            "Score": score,
+            "Feedback": feedback
+        })
 
-    return render_template('essay/download.html', file_path="Evaluated_Student_Responses.xlsx")
+    # Save the results into an Excel file
+    file_path = os.path.join(evaluated_folder, f"{register_number}_evaluation.xlsx")
+    results_df = pd.DataFrame(results)
+    results_df.to_excel(file_path, index=False)
 
-# Download Evaluated File
-@essay_blueprint.route('/download/<filename>')
-def download_file(filename):
-    if 'teacher_username' not in session:
-        return redirect(url_for('essay.login_page'))  # Ensure login first
+    return render_template('essay/upload.html', results=results)
 
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-    return send_file(file_path, as_attachment=True)
+@essay_blueprint.route('/download')
+def download():
+    name = session.get('name', 'Unknown_Student')
+    reg_no = session.get('reg_no', 'Unknown_Student')
+    result_file = os.path.join(evaluated_folder, f"{reg_no}_evaluation.xlsx")
+
+    if os.path.exists(result_file):
+        return send_file(result_file, as_attachment=True)
+    else:
+        return "No results available to download", 404

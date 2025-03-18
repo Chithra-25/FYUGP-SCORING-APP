@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Code Response File</title>
+    <style>
+        /* Light gradient background */
+        body {
+            background: url("{{ url_for('static', filename='images/upload.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* Form styling */
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: auto;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            margin-top: 5px;
+        }
+
+        input[type="submit"] {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        /* Error message */
+        p[style="color: red;"] {
+            font-weight: bold;
+        }
+
+        /* Table styling */
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Download & Back Links */
+        a {
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background: #218838;
+        }
+
+        /* Chart styling */
+        img {
+            max-width: 90%;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upload Code Response File</h1>
+    <p>Please upload an Excel file containing 'instruction' and 'response' columns.</p>
+
+    <form action="{{ url_for('code.index') }}" method="post" enctype="multipart/form-data">
+        <label for="response_file">Upload your file:</label>
+        <input type="file" name="response_file" accept=".xlsx" required><br><br>
+        <input type="submit" value="Evaluate">
+    </form>
+
+    {% if error %}
+        <p style="color: red;">Error: {{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+    <h2>Evaluation Results</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Register Number</th>
+            <th>Instruction</th>
+            <th>Response</th>
+            <th>Score</th>
+            <th>Feedback</th>
+        </tr>
+        {% for row in results %}
+        <tr>
+            <td>{{ row['Name'] }}</td>
+            <td>{{ row['Register Number'] }}</td>
+            <td>{{ row['Instruction'] }}</td>
+            <td>{{ row['Response'] }}</td>
+            <td>{{ row['Score'] }}</td>
+            <td>{{ row['Feedback'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="{{ url_for('code.download') }}">Download Evaluation Results</a>
+
+    <h2>Evaluation Summary</h2>
+    <img src="data:image/png;base64,{{ chart }}" alt="Evaluation Summary Chart" />
+    {% endif %}
+    
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    
+</body>
+</html>

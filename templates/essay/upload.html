@@ -3,43 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Files</title>
+    <title>Upload Student Response File</title>
     <style>
         body {
-            background-image: url("{{ url_for('static', filename='essay/upload.jpg') }}");
-            background-size: cover;
-            background-position: center;
             font-family: Arial, sans-serif;
-            color: white;
+            background: url("{{ url_for('static', filename='images/upload.webp') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
             text-align: center;
-            padding: 50px;
-        }
-        .container {
-            background: rgba(0, 0, 0, 0.7);
+            margin: 0;
             padding: 20px;
-            border-radius: 10px;
-            display: inline-block;
         }
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            width: 50%;
+            min-width: 350px;
+            text-align: left;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        input[type="submit"] {
+            margin-top: 15px;
             padding: 10px 20px;
             font-size: 16px;
-            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            background: #007bff;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 90%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: white;
+            background: #28a745;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        a:hover {
+            background:rgb(165, 12, 226);
+        }
+
+        .back {
+            background:rgb(121, 187, 16);
+        }
+
+        .back:hover {
+            background:rgb(174, 8, 216);
         }
     </style>
 </head>
 <body>
+    <h1>Upload Student Response File</h1>
+    <p>Please upload an Excel file containing both questions and your responses in separate columns.</p>
+
     <div class="container">
-        <h2>Upload Your Files</h2>
-        <form action="{{ url_for('essay.upload_file') }}" method="POST" enctype="multipart/form-data">
-            <input type="file" name="questions" required>
-            <input type="file" name="responses" required>
-            <br><br>
-            <button type="submit">Upload and Process</button>
+        <form action="{{ url_for('essay.evaluate') }}" method="post" enctype="multipart/form-data">
+            <label for="response_file">Upload your file:</label>
+            <input type="file" name="response_file" accept=".xlsx" required><br><br>
+            <input type="submit" value="Evaluate">
         </form>
     </div>
+
+    {% if results %}
+    <h2>Evaluation Results</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Register Number</th>
+            <th>Question</th>
+            <th>Response</th>
+            <th>Score</th>
+            <th>Feedback</th>
+        </tr>
+        {% for row in results %}
+        <tr>
+            <td>{{ row["Name"] }}</td>
+            <td>{{ row["Register Number"] }}</td>
+            <td>{{ row["Question"] }}</td>
+            <td>{{ row["Response"] }}</td>
+            <td>{{ row["Score"] }}</td>
+            <td>{{ row["Feedback"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="{{ url_for('essay.download') }}">Download Evaluation Results</a>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('dashboard') }}" class="back">Back to Dashboard</a>
 </body>
 </html>
