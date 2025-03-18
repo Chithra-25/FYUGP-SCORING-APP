@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Student Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<style>
+    body {
+        background: url("{{ url_for('static', filename='images/login.webp') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+</style>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="POST">
+            <label for="name">Name of the Student:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="reg_no">Registration Number:</label>
+            <input type="text" id="reg_no" name="reg_no" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
